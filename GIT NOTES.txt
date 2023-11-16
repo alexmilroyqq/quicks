@@ -1,0 +1,11 @@
+cd desktop
+cd quicks
+also right click open in termal
+
+git pull
+git add *.*
+git commit -m 'message generic'
+git push
+
+
+check for ui git 
