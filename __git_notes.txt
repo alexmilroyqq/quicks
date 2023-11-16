@@ -1,4 +1,5 @@
 cd C:\Users\Alex\Desktop\QUICKS
+cd C:\Users\Alexm\Desktop\EasyImportPython\quicks_git\quicks
 
 
 search git cmd

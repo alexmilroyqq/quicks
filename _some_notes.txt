@@ -5,3 +5,6 @@ quick_files
 quick_ui
    searcher
    gallery
+   image_points
+   function
+   pythonrunner?
