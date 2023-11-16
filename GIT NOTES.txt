@@ -1,3 +1,6 @@
+run Git CMD
+cd C:\Users\alexm\Desktop\QUICKS
+
 cd desktop
 cd quicks
 also right click open in termal

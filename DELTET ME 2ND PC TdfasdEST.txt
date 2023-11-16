@@ -1,8 +1,0 @@
-BLAH BLAHDDDFSD
-
-
-def quick_shortcut_lnk_find(shortcut_fp):
-    import win32com.client
-    shell = win32com.client.Dispatch('WScript.Shell')
-    shortcut = shell.CreateShortcut(shortcut_fp)
-    return shortcut.Targetpath
