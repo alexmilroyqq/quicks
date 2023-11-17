@@ -10,5 +10,5 @@ git add *.*
 git commit -m 'message generic'
 git push
 
-
+GI
 check for ui git 
