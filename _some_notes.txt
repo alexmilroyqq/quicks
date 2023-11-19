@@ -1,4 +1,8 @@
 quick_string
+quick_image
+   normalize
+   concat
+   imshow given multiple images
 quick_examples
 quick_files
    identical_files_grouper

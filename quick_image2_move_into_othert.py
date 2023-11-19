@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
 
-
-
-
-
-
-
+'''
+Future:-
+   normalize
+   concat
+   imshow given mulitple images and titles
+'''
 
 def is_image_color(img):
     if len(img.shape)==3 and img.shape[-1]==3:
@@ -160,8 +160,112 @@ def add_blurring_to_image(img, sigma=3, mode=0):
         imgb = scipy.signal.convolve2d(img, kernel, mode='full', boundary='fill', fillvalue=0)
         # scipy.ndimage.correlate    # prevents kernal flipping
     return imgb
+        
 
 
 
 
+
+
+def quick_example_image():
+    import numpy as np
+    img = np.zeros([400,400,3])
     
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            #red square
+            if 190>i>10:
+                if 190>j>10:
+                    img[i,j,0] = 1
+                    
+            #blue circle
+            if (i-100)**2 +(j-300)**2 <90**2:
+                img[i,j,2] = 1
+                continue                 
+            
+            #white lines
+            if j in (200,80,160):
+                img[i,j,:] = 1
+                continue
+                    
+            #green traingle
+            n = (3/2)**0.5
+            i2, j2 = i-250, j-300        
+            if i<350:
+                if i2+(n*j2)>0:
+                    if i2-(n*j2)>0:
+                        img[i,j,1] = 1
+                        continue
+    
+            #small colored boxs
+            if 390>i>370 and 360>j>240:
+                for ii,cc in enumerate([(1,1,0), (0,1,1), (1,0,1), (1,1,1),(1,0.5,0),(0,1,0.5)]):
+                    if (j-240)//20==ii:
+                        img[i,j,:]=cc
+                        
+            #black-white chess board spectrum
+            if 219>i>205:        
+                if 270>j>205:
+                    img[i,j,:] = (i+j)%2==0 if j<240 else (j-240)/30 
+                    continue                    
+    
+    
+            # yellow point spread function
+            z = 30/(30+(i-250)**2 +(j-245)**2)
+            if z>0.01:
+                img[i,j,:2] = z      
+    
+            # spectrum square
+            if 110>i>90:        
+                if 140>j>60:
+                    img[i,j,:] = ((i-90)/(110-90), (j-60)/(140-60),0)                  
+            
+            #spectrum cross
+            if 390>i>210 and 190>j>10:
+                if abs((i-300)+(j-100))<10 or abs((i-300)-(j-100))<10:
+                    a = max(0,(60-abs(j-10))/60)+max(0,(60-abs(j-190))/40)
+                    b = max(0,(60-abs(j-70))/60) 
+                    c = max(0,(60-abs(j-130))/60)
+                    img[i,j,:] = (a,b,c)
+                    
+    return img
+        
+
+
+
+if __name__ == '__main__':
+    if True:
+        img = quick_example_image() 
+        image_show_popout(add_noise_to_image(add_blurring_to_image(img)))
+        image_show_popout(img)       
+    else:
+    
+        #image_show_popout(img)
+    
+        #image_show_popout(add_noise_to_image(img))
+        
+        img2 = img[:,:,0]
+        
+        imgb1 = add_blurring_to_image(img2, mode=0)    
+        imgb2 = add_blurring_to_image(img2, mode=1)
+        image_show_popout(imgb1)
+        image_show_popout(imgb2)
+        
+        imgb = add_blurring_to_image(img, mode=0)
+        
+        image_show_popout(imgb)
+        
+        
+    
+
+
+
+
+
+
+
+
+
+
+
+
