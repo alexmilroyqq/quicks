@@ -1,7 +1,0 @@
-quick_examples
-quick_split
-quick_string
-add grid lines to example image
-ui_draw
-tests
-quicks# which prints out modules and sub modules

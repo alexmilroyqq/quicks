@@ -1,14 +1,31 @@
-run Git CMD
 cd C:\Users\alexm\Desktop\QUICKS
+cd C:\Users\Alex\Desktop\QUICKS
+cd C:\Users\Alexm\Desktop\EasyImportPython\quicks_git\quicks
+??also right click open in termal??
 
-cd desktop
-cd quicks
-also right click open in termal
+Search/Run:- GIT CMD
+cd to write locaiton
 
 git pull
-git add *.*
-git commit -m 'message generic'
+git commit -m "message"
+   git add *.*
+   git commit -m "message"
 git push
 
-GI
+
+
+#############################################################
+#                   Extra Notes                             #
+#############################################################
+Dell-XPS:-
+
+-------------------------------------------------------------
+Work-Laptop:-
+
+-------------------------------------------------------------
+Small_Pc:-
+
+-------------------------------------------------------------
 check for ui git 
+-------------------------------------------------------------
+

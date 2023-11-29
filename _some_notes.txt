@@ -1,14 +1,26 @@
+#  import quick# prints all files 
+#  quick.search('decorator') list the info related to this
+#  quicks# which prints out modules and sub modules
+#  quick_examples; image - add grid lines
+
 quick_string
+quick_split
 quick_image
    normalize
    concat
    imshow given multiple images
+   *gallery
 quick_examples
 quick_files
    identical_files_grouper
 quick_ui
-   searcher
+   searcher-csv
+   searcher-dict/json?
+   text?
    gallery
-   image_points
+   image_points/draw
    function
    pythonrunner?
+TESTS/unit-tests
+
+
