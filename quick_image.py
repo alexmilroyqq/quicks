@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Created on Mon Oct  9 12:10:06 2023@author: alexm"""
+"""Created on Mon Oct  9 12:10:06 2023@author: alexm
+
+add canndy edge? here
+
+
+"""
 
 import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
 
-
+from quick_example import image
 
 
 
@@ -55,11 +60,10 @@ def image_show(*imgs, titles=None):
 
 color_dict = {'red':(255,0,0), 'green':(0,255,0), 'blue':(0,0,255),
               True:(0,255,0), False:(255,0,0), 'white':(255, 255, 255),
-              'yellow':(255,255,0), 
-              'black':(0,0,0)}
+              'yellow':(255,255,0), 'black':(0,0,0)}
 
 
-def add_box_to_image(fimg, box, clr = 'red'):
+def add_box_to_image(fimg, box, clr = 'red', thickness=1):
     # (0,0) is top left (up-down, left-right)
     clr = color_dict.get(clr, clr)
     if isinstance(fimg, str):
@@ -74,9 +78,12 @@ def add_box_to_image(fimg, box, clr = 'red'):
     if len(data.shape)==2:
         data = np.stack([data]*3,2)
     data2 = data.copy()
-    x1,x2,y1,y2 = box['x'], box['x']+box['w'], box['y'], box['y']+box['h']
+    if isinstance(box, dict):
+        x1,x2,y1,y2 = box['x'], box['x']+box['w'], box['y'], box['y']+box['h']
+    if isinstance(box, (tuple, list)):
+        (x1,y1),(x2,y2) = box[0], box[1]
     
-    t = 1 # thickness
+    t = thickness
     data2[y1-t:y1+t,x1:x2,:]=clr
     data2[y2-t:y2+t,x1:x2,:]=clr
     data2[y1:y2,x1-t:x1+t,:]=clr
@@ -160,6 +167,44 @@ def add_blurring_to_image(img, sigma=3, mode=0):
         imgb = scipy.signal.convolve2d(img, kernel, mode='full', boundary='fill', fillvalue=0)
         # scipy.ndimage.correlate    # prevents kernal flipping
     return imgb
+
+
+def convert_to_color(img, inverse=False):
+    ndim = len(img.shape)
+    assert ndim in (2,3)
+    if not inverse:
+        if ndim==3 and img.shape[-1]==2:
+            # this will crash is_iamge_color so before
+            blank = np.zeros(img.shape[:2])
+            return np.stack([img[:,:,0], img[:,:,1], blank], axis=-1)        
+        if is_image_color(img):
+            return img        
+        img_slice = img if ndim==2 else img[:,:,0]
+        return np.stack([img_slice, img_slice, img_slice], axis=-1)
+    if ndim==2:
+        return img
+    return img.mean(axis=-1)
+    
+def insert_image(img_into, img_from, loc=(0,0)):
+    print('overreach not implemented yet')
+    if is_image_color(img_into) != is_image_color(img_from):
+        img_from = convert_to_color(img_from)
+        img_into = convert_to_color(img_into)        
+    x,y = loc    
+    x2,y2 = x+img_from.shape[0], y+img_from.shape[1]
+    img_into[x:x2, y:y2, :] = img_from
+    return img_into  
+
+
+
+
+
+
+
+
+
+
+
 
 
 

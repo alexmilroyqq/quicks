@@ -11,6 +11,9 @@ quick_image
    imshow given multiple images
    *gallery
 quick_examples
+   text passag shaspere?
+   dict
+   nested object
 quick_files
    identical_files_grouper
 quick_ui
@@ -24,3 +27,7 @@ quick_ui
 TESTS/unit-tests
 
 
+maybe add jobs
+jobs would be more spacific but some times useful
+job_get_filenames_in_folder_nice_strucutre ?
+maybe each quick includes examples which is a string text the functions
