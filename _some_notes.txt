@@ -10,13 +10,10 @@ quick_image
    concat
    imshow given multiple images
    *gallery
-<<<<<<< HEAD
 quick_examples
    text passag shaspere?
    dict
    nested object
-=======
->>>>>>> 0df927a78e7d473f5124c5f8ee585b95a32932b0
 quick_files
    identical_files_grouper
 quick_ui
