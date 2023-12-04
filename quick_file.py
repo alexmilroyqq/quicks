@@ -81,6 +81,90 @@ def get_files(folder, include_folders=True):
         files = [f for f in files if os.path.isfile(f)]
     return files
 
+
+
+
+
+def get_subfiles__pretty_text(folder, indent_str = '   ', folder_pattern = '<{}>'):
+    '''
+    Returns a string of all the subfiles in a folder in a nice pretty format
+    '''
+
+    def find_loc_of_first_disagreanent_two_lists(lisa,lisb):
+        for i, (a,b) in enumerate(zip(lisa,lisb)):
+            if a!=b:
+                return i
+        return min(len(lisa),len(lisb))
+
+    # creating nice file list
+    def get_identical_prefix(*msgs):
+        out = ''
+        for p in zip(*msgs):
+            if len(set(p))>1:
+                break
+            out = out+p[0]
+        return out    
+
+    if isinstance(folder, str):
+        filess = get_subfiles(folder)
+    elif isinstance(folder, (list, tuple)):
+        print('Assuming the list youve given is a list of filenames to prettify')
+        filess = folder
+    else:
+        assert False, 'folder should be a string(filepath)'
+    
+    f1,f2 = filess[0], filess[-1]
+    base,_ = get_identical_prefix(f1,f2).rsplit('\\',1)
+    base = base+'\\'
+    out = [base]    
+    
+    folderlocs2 = []
+    for f in filess:
+        f0 = f.removeprefix(base)
+        *folderlocs,f1 = f0.split('\\')
+        depth = 1+len(folderlocs)
+        
+        # find a newly seen folder
+        iloc = find_loc_of_first_disagreanent_two_lists(folderlocs, folderlocs2)
+
+        # add newly seen folders to list
+        for i, folderloc in enumerate(folderlocs):
+            if i>=iloc:
+                indent = (i+1) * indent_str
+                out.append(indent+ (folder_pattern.replace('{}', folderloc)))
+                    
+        # add file to list
+        indent = depth * indent_str
+        out.append(indent+f1)
+        
+        folderlocs2 = folderlocs
+    files_text = '\n'.join(out)
+    return files_text
+
+
+def quick_find_file(*contains, extension=None, folder = r"C:\Users\Alexm\Desktop"):
+    if not os.path.exist(folder) and folder==r"C:\Users\Alexm\Desktop":
+        assert False, 'put other paths here'
+        
+    contains0 = [e.lower() for e in contains]
+    files0 = get_subfiles(folder)
+    files1 = [(os.path.split(f)[-1], f) for f in files0]
+    files2 = [ff for ff in files1 if all([c in ff[0] for c in contains0])]
+    if extension is not None:
+        if isinstance(extension,str):
+            extension = [extension]
+        files3 = [ff for ff in files2 if all([ff[0].endswith(ext) for ext in extension])]
+    else:
+        files3 = files2
+    return files3
+    
+    
+    desktop_files2 = [f for f in desktop_files if 'firefox' in os.path.split(f)[-1].lower()]
+
+
+
+
+
 #------------------------------------------------------------------------------
 # def remove_empty_folders():
 #     pass
@@ -284,6 +368,22 @@ def find_textfiles(filepaths, func=None, extension='.txt'):
     if isinstance(filepaths, __function_type):
         pass
            
+
+
+
+
+def path_split(path, loc=None):
+    if loc is None:
+        return os.path.normpath(path).rstrip(os.path.sep).split(os.path.sep)
+    return os.path.normpath(path).rstrip(os.path.sep).rsplit(os.path.sep, loc)
+
+
+
+
+
+
+
+
 
 
 
