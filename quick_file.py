@@ -81,6 +81,67 @@ def get_files(folder, include_folders=True):
         files = [f for f in files if os.path.isfile(f)]
     return files
 
+
+
+
+
+def get_subfiles__pretty_text(folder, indent_str = '   ', folder_pattern = '<{}>'):
+    '''
+    Returns a string of all the subfiles in a folder in a nice pretty format
+    '''
+
+    def find_loc_of_first_disagreanent_two_lists(lisa,lisb):
+        for i, (a,b) in enumerate(zip(lisa,lisb)):
+            if a!=b:
+                return i
+        return min(len(lisa),len(lisb))
+
+    # creating nice file list
+    def get_identical_prefix(*msgs):
+        out = ''
+        for p in zip(*msgs):
+            if len(set(p))>1:
+                break
+            out = out+p[0]
+        return out    
+
+    if isinstance(folder, str):
+        filess = get_subfiles(folder)
+    elif isinstance(folder, (list, tuple)):
+        print('Assuming the list youve given is a list of filenames to prettify')
+        filess = folder
+    else:
+        assert False, 'folder should be a string(filepath)'
+    
+    f1,f2 = filess[0], filess[-1]
+    base,_ = get_identical_prefix(f1,f2).rsplit('\\',1)
+    base = base+'\\'
+    out = [base]    
+    
+    folderlocs2 = []
+    for f in filess:
+        f0 = f.removeprefix(base)
+        *folderlocs,f1 = f0.split('\\')
+        depth = 1+len(folderlocs)
+        
+        # find a newly seen folder
+        iloc = find_loc_of_first_disagreanent_two_lists(folderlocs, folderlocs2)
+
+        # add newly seen folders to list
+        for i, folderloc in enumerate(folderlocs):
+            if i>=iloc:
+                indent = (i+1) * indent_str
+                out.append(indent+ (folder_pattern.replace('{}', folderloc)))
+                    
+        # add file to list
+        indent = depth * indent_str
+        out.append(indent+f1)
+        
+        folderlocs2 = folderlocs
+    files_text = '\n'.join(out)
+    return files_text
+
+
 #------------------------------------------------------------------------------
 # def remove_empty_folders():
 #     pass
