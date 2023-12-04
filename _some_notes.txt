@@ -10,7 +10,6 @@ quick_image
    concat
    imshow given multiple images
    *gallery
-quick_examples
 quick_files
    identical_files_grouper
 quick_ui

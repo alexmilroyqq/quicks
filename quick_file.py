@@ -142,6 +142,29 @@ def get_subfiles__pretty_text(folder, indent_str = '   ', folder_pattern = '<{}>
     return files_text
 
 
+def quick_find_file(*contains, extension=None, folder = r"C:\Users\Alexm\Desktop"):
+    if not os.path.exist(folder) and folder==r"C:\Users\Alexm\Desktop":
+        assert False, 'put other paths here'
+        
+    contains0 = [e.lower() for e in contains]
+    files0 = get_subfiles(folder)
+    files1 = [(os.path.split(f)[-1], f) for f in files0]
+    files2 = [ff for ff in files1 if all([c in ff[0] for c in contains0])]
+    if extension is not None:
+        if isinstance(extension,str):
+            extension = [extension]
+        files3 = [ff for ff in files2 if all([ff[0].endswith(ext) for ext in extension])]
+    else:
+        files3 = files2
+    return files3
+    
+    
+    desktop_files2 = [f for f in desktop_files if 'firefox' in os.path.split(f)[-1].lower()]
+
+
+
+
+
 #------------------------------------------------------------------------------
 # def remove_empty_folders():
 #     pass
@@ -345,6 +368,22 @@ def find_textfiles(filepaths, func=None, extension='.txt'):
     if isinstance(filepaths, __function_type):
         pass
            
+
+
+
+
+def path_split(path, loc=None):
+    if loc is None:
+        return os.path.normpath(path).rstrip(os.path.sep).split(os.path.sep)
+    return os.path.normpath(path).rstrip(os.path.sep).rsplit(os.path.sep, loc)
+
+
+
+
+
+
+
+
 
 
 
