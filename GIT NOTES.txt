@@ -1,3 +1,5 @@
+https://github.com/alexmilroyqq/quicks
+
 cd C:\Users\alexm\Desktop\QUICKS
 cd C:\Users\Alex\Desktop\QUICKS
 cd C:\Users\Alexm\Desktop\EasyImportPython\quicks_git\quicks
