@@ -23,7 +23,15 @@ Dell-XPS:-
 
 -------------------------------------------------------------
 Work-Laptop:-
-
+   # wrangle indnedted tree to stuff
+   # pre data tasks
+   # create a windows library with only one file type pu searched through all folders
+   # running python code in matlab can you
+   # adding lots of rows into table
+   # convert indendt text to dataframe
+   # save csvs read
+   # quicks.quicks('stuff to search')
+   # quicks.search('stuff to search')
 -------------------------------------------------------------
 Small_Pc:-
 
