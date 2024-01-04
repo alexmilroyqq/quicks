@@ -34,7 +34,9 @@ Work-Laptop:-
    # quicks.search('stuff to search')
 -------------------------------------------------------------
 Small_Pc:-
-
+    extrenal hardrive is broke
+    quicks_read_csvs # format that has multiple tables
+    and add file size and modified stuff to get filenames
 -------------------------------------------------------------
 check for ui git 
 -------------------------------------------------------------
