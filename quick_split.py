@@ -1,3 +1,16 @@
+def text_split(msg, *splits, ignore_end=True, ignore_start=True):
+    b = msg
+    out = []
+    for split in splits:
+        a,b = b.split(split, 1)
+        out.append(a)
+    else:
+        out.append(b)
+    ind_start, ind_end = 1 if ignore_start else None, -1 if ignore_end else None    
+    return out[ind_start: ind_end]
+    
+
+
 
 def list_splitter(lis, points, points_seperate_split=False):
     out = [[]]
@@ -58,6 +71,40 @@ def split_intersections(lisa, lisb):
     only_b = [e for e in lisb if e not in both_ab]
     return only_a, both_ab, only_b
     
+def split_into_parts(lis, nparts=None, part_length=None, even_sizes=False):
+    
+    assert (nparts is None) != (part_length is None)  
+    total_length = len(lis)
+    
+    if nparts is not None:
+        len_lis,rem = divmod(total_length, nparts)
+    if part_length is not None:
+        len_lis = part_length
+        nparts, rem = divmod(total_length, part_length)
+    if even_sizes:
+        rem = 0
+    
+    locs0 = [n*len_lis +(min(rem,n)) for n in range(1, nparts+1)]
+    locs = [(a,b) for a,b in zip(([0]+locs0), (locs0)) ]
+    # even parts
+    
+    parts = [lis[loc[0]:loc[1]] for loc in locs]
+    remaineder_part = lis[locs[-1][1]:]
+    if even_sizes:
+        return parts, remaineder_part
+    else:
+        return parts
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -102,9 +149,11 @@ if __name__ == '__main__':
     #split_by_filter
     #split_by_batch    
         
-    
-    
-    
+    msg = '<html><body><!--StartFragment--><a href="https://forum.qt.io/topic/36299/some-questions-about-accept-and-ignore-of-event/2">Some questions about accept() and ignore() of event | Qt Forum</a><!--EndFragment--></body></html>'
+    e = text_split(msg, '<a href="', '">', '</a>')
+        
+        
+        
     
     
     

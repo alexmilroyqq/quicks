@@ -442,14 +442,52 @@ def find_textfiles(filepaths, func=None, extension='.txt'):
 
 
 
-def path_split(path, loc=None):
-    if loc is None:
-        return os.path.normpath(path).rstrip(os.path.sep).split(os.path.sep)
-    return os.path.normpath(path).rstrip(os.path.sep).rsplit(os.path.sep, loc)
 
 
 
 
+def filename_split(fp):
+    "('C:\\Users\\Alexm\\Desktop\\GD\\', '_Fcw_IT2aUAApLNI-10-13-18 ', '.jpg')"
+    fp = os.path.normpath(fp)
+    a0,b0 = os.path.split(fp)
+    a = a0+os.path.sep
+    if '.' in b0:
+        b,c0 = b0.rsplit('.', 1)
+        c= '.'+c0
+    else:
+        b,c = b0, ''
+    return a,b,c
+
+
+def get_fileinfo(filepath):
+    '''
+    in the future
+    hash, isfolder,  hash, 
+    also when given folder given option of find all files in folder/subfolder??
+    '''
+    if isinstance(filepath, (list,tuple)):
+        import pandas as pd
+        order = ['root', 'basename', 'ext', 'parent', 'size_MB', 'size_bits', 'is_folder',
+                 'created_date', 'created_time', 'modified_date', 'modified_time',
+                 'accessed_date', 'accessed_time']
+        out = []
+        for i, filepath0 in enumerate(filepath):
+            info = get_fileinfo(filepath0)
+            out.append([filepath0,]+[info[k] for k in order])
+        return pd.DataFrame(columns=['filepath',]+order, data=out) 
+    import os, datetime, time
+    root, basename, ext = filename_split(filepath)
+    parent = os.path.split(root[:-1])[1]
+    statinfo = os.stat(filepath)
+    created_date, created_time = datetime.datetime.strptime(time.ctime(statinfo.st_ctime), "%a %b %d %H:%M:%S %Y").isoformat().split('T')
+    modified_date, modified_time = datetime.datetime.strptime(time.ctime(statinfo.st_mtime), "%a %b %d %H:%M:%S %Y").isoformat().split('T')
+    accessed_date, accessed_time = datetime.datetime.strptime(time.ctime(statinfo.st_atime), "%a %b %d %H:%M:%S %Y").isoformat().split('T')
+    size_raw = statinfo.st_size
+    is_folder = os.path.isdir(filepath)
+    size_MB = round(float(statinfo.st_size)/1048576 ,4)# MB
+    return dict(created_date=created_date,created_time=created_time,modified_date=modified_date,modified_time=modified_time,size_bits=size_raw,size_MB = size_MB,
+                root=root, basename=basename, ext=ext, parent=parent, is_folder=is_folder,
+                accessed_date=accessed_date, accessed_time=accessed_time)
 
 
 
