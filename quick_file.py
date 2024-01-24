@@ -22,13 +22,17 @@ def __get_file_extension(filepath):
 __function_type = type(lambda : None)
 
 
-def read_textfile(fp):
+def read_textfile(fp, keep_newlines=True):
     if isinstance(fp, (list, tuple)):
-        return {f:read_textfile(f) for f in fp}
-    elif isinstance(fp, str): 
+        return {f:read_textfile(f, keep_newlines) for f in fp}
+    elif isinstance(fp, str):
         with open(fp) as fo:
-             return fo.readlines()
-
+             if keep_newlines:
+                 return fo.readlines()
+             return fo.read().splitlines()           
+             
+       
+        
 
 def save_textfile(fp, text):
     if isinstance(text, (list, tuple)):
