@@ -31,3 +31,8 @@ maybe add jobs
 jobs would be more spacific but some times useful
 job_get_filenames_in_folder_nice_strucutre ?
 maybe each quick includes examples which is a string text the functions
+
+add searcher??
+and
+quick_library_function # hidden but hug list of bespoke funcitons, like copy image filepath to clipbaord
+have folder added here called library and contains a bunch of small function fules

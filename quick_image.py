@@ -196,11 +196,83 @@ def insert_image(img_into, img_from, loc=(0,0)):
     return img_into  
 
 
+# why is this so slow
+def flood_fill(img, seed, mode= 'fast', add_cross=True):
+    if mode == 'fast':
+        import cv2    
+        value = img[seed[0], seed[1]]
+        img = (img==value).astype(int)
+        img_flood = cv2.floodFill(img, None, seed, newVal=2)[1]
+        return (img_flood ==2).astype(int)
 
 
+    if mode == 'slow':
+        from scipy.signal import convolve2d
+        conv = [[0,1,0],[1,0,1],[0,1,0]]
+        
+        value = img[seed]
+        img3 = (img==value).astype(int)
+        img3[img3==1] = 3
+        img3[img3==0] = 2
+        img3[seed] = 1
+        
+        # change this
+        # 0 filled
+        # 1 filling
+        # 2 not-fillable
+        # 3 filliable
+        
+        if add_cross:
+            outs = (np.flip(img3[seed[0], :seed[1]]), img3[seed[0], (seed[1]+1):], np.flip(img3[:seed[0], seed[1]]), img3[(seed[0]+1):, seed[1]],)
+            for e in outs:
+                e[-1] = 0
+            outs1 = [np.where(e!=3)[0] for e in outs]
+            outs2 = [e[0] for e in outs1]
+            outs3 = [seed[1]-outs2[0],seed[1]+outs2[1], seed[0]-outs2[2],seed[0]+outs2[3]]
+            img3[outs3[2]:outs3[3],seed[1]] = 1
+            img3[seed[0],outs3[0]:outs3[1]] = 1
+        
+        while True:
+            near_filling = (convolve2d(img3==1, conv, boundary='symm', mode='same')>0.5) & (img3==3)
+            img3[img3==1] = 0
+            img3[near_filling] = 1
+            if near_filling.sum()==0:
+                break
+        img_out = (img3==0).astype(int)
+        return img_out
 
 
+def get_points_of_lines_between_two_points(p1, p2):
+    (x1, y1), (x2, y2) = p1, p2
+    dx = abs(x2 - x1)
+    dy = abs(y2 - y1)
+    sx = 1 if x1 < x2 else -1
+    sy = 1 if y1 < y2 else -1
+    err = dx - dy
+    out = []
+    while True:
+        out.append([x1, y1])
+        if x1 == x2 and y1 == y2:
+            return out
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy
+            x1 += sx
+        if e2 < dx:
+            err += dx
+            y1 += sy
 
+
+def get_points_of_unit_regular_ploygon(n, offset=0, include_angle=True):
+    constant = (2*math.pi)/n
+    if offset !=0:
+        offset = offset *constant
+    for i in range(n):
+        angle = (constant * i) + offset
+        if include_angle:
+           yield (math.cos(angle), math.sin(angle), angle)
+        else:
+           yield (math.cos(angle), math.sin(angle))     
 
 
 

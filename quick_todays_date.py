@@ -8,3 +8,7 @@ def quick_todays_date(verbose=False):
     return date.today().isoformat()
 
 
+
+
+
+

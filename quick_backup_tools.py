@@ -100,36 +100,39 @@ find_similar_files(filess, files)
 from quick_file import quick_find_similar_unused_filepath
 from quick_todays_date import quick_todays_date
 
-pc_name = get_pc_name()
 
-if pc_name == 'Small_PC_2023_Mini_PC.name':
-    print('Save csv of all files')
-    today = quick_todays_date()
-    for folder in (r"C:\Users\Alex\Desktop\BackupLinks", "D:\__Backup__"):
-        csv_filename = os.path.join(folder, f'All_Files__{today}.csv')
-        csv_filename = quick_find_similar_unused_filepath(csv_filename)
-        df.to_csv(csv_filename)
-    print('saved_csv')
+if __name__=='__main__':
 
-
-if pc_name == 'Small_PC_2023_Mini_PC.name':
-    print('Copy recent version of certain backup files')
-
-    from shutil import copy2 as overwrite_copy
-    from quick_file import quick_shortcut_lnk_find
+    pc_name = get_pc_name()
     
-    links_dir = r"C:\Users\Alex\Desktop\BackupLinks\4534_BackupFiles"    
-    folders_to_copy_to = [r"D:\__Backup__\4534_BackedUp", r"C:\Users\Alex\Desktop\BackupLinks\4534_BackedUp"]   
-    
-    links = [os.path.join(links_dir,f) for f in os.listdir(links_dir)]
-    links2 = [quick_shortcut_lnk_find(f) for f in links]
-    # this will overwrite any files
-    for link2 in links2:
-        for folder_to_copy_to in folders_to_copy_to:
-            overwrite_copy(link2, folder_to_copy_to) 
-
+    if pc_name == 'Small_PC_2023_Mini_PC.name':
+        print('Save csv of all files')
+        today = quick_todays_date()
+        for folder in (r"C:\Users\Alex\Desktop\BackupLinks", "D:\__Backup__"):
+            csv_filename = os.path.join(folder, f'All_Files__{today}.csv')
+            csv_filename = quick_find_similar_unused_filepath(csv_filename)
+            df.to_csv(csv_filename)
+        print('saved_csv')
     
     
+    if pc_name == 'Small_PC_2023_Mini_PC.name':
+        print('Copy recent version of certain backup files')
+    
+        from shutil import copy2 as overwrite_copy
+        from quick_file import quick_shortcut_lnk_find
+        
+        links_dir = r"C:\Users\Alex\Desktop\BackupLinks\4534_BackupFiles"    
+        folders_to_copy_to = [r"D:\__Backup__\4534_BackedUp", r"C:\Users\Alex\Desktop\BackupLinks\4534_BackedUp"]   
+        
+        links = [os.path.join(links_dir,f) for f in os.listdir(links_dir)]
+        links2 = [quick_shortcut_lnk_find(f) for f in links]
+        # this will overwrite any files
+        for link2 in links2:
+            for folder_to_copy_to in folders_to_copy_to:
+                overwrite_copy(link2, folder_to_copy_to) 
+    
+        
+        
     
 if False:
 
@@ -148,3 +151,12 @@ if False:
     
     red = color_text().red
     print(f'The dog was {red("red")}')
+
+
+
+
+
+
+
+
+
