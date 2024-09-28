@@ -14,7 +14,9 @@ from PyQt5.QtGui import QFont, QIntValidator
 from PyQt5.QtWidgets import QLineEdit, QLabel, QHBoxLayout, QVBoxLayout, QPushButton
 
 
-
+def changed():
+    if False:
+        print('changed')
 
 '''
 
@@ -22,12 +24,12 @@ This kind of works
    1)  solve index so loops
    2)  get QPicture to deal with black and white images and floats
    3)  mseconds best what happens if i want to pause an exact amount over iteration
-   4)  3d images it can deal with 
+   4)  3d volumes it can deal with 
    5)  titles?
    6)  can but second argument in with same length as images and the info will be displyed over image
+   6b) if list contains two images so both images side by side
    7)  show stats of the variable
    8)  name of variable in the name of the title
-   9)  option to the save to mp4
    10) repeat mode
    11) when hovering value of pixel as well as max min in image as well as image volume
    12) prograss bar differnt from 100 
@@ -89,7 +91,10 @@ class QPictureBase2(QWidget):
         size = (event.size().width()-2, event.size().height()-2)  
         self.scaled_pixmap = self.pixmap.scaled(*size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.label.setPixmap(self.scaled_pixmap)
+        changed()
+        self.current_size = size
         
+    #        self.widget_image.update(image, update_label=True,reset_widget_size=False) 
     def update(self, image_data=None, reset_widget_size=True, update_label=False):
         if image_data is not None:
             self.image_data = image_data
@@ -97,7 +102,15 @@ class QPictureBase2(QWidget):
         self.pixmap = QPixmap.fromImage(qimage)
         if not update_label:
             self.label = self.QLabel(self)         
-        self.label.setPixmap(self.pixmap)
+            self.label.setPixmap(self.pixmap)
+        else:
+            changed()
+            if hasattr(self, 'current_size'):
+                self.scaled_pixmap = self.pixmap.scaled(*self.current_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                self.label.setPixmap(self.scaled_pixmap)
+            else:              
+                self.label.setPixmap(self.pixmap)                
+            
         if not update_label:
             self.label.setAlignment(Qt.AlignCenter)
             self.scroll_area.setWidget(self.label)
@@ -362,7 +375,7 @@ class MainWindow_PlayVideo(QMainWindow):
              
         self.index = new_index
         image = self.current_image()
-        self.widget_image.update(image) 
+        self.widget_image.update(image, update_label=True, reset_widget_size=False) 
         self.toolbar.textbox.setText(str(new_index))
         pvalue = int(100*self.index/self.nimages)
         self.toolbar.progress.setValue(pvalue)
@@ -399,8 +412,12 @@ class MainWindow_PlayVideo(QMainWindow):
     def on_click_save(self):
         options = QFileDialog.Options()
         #options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", "", "All Files (*);;Text Files (*.txt)", options=options)    
-        save_images(self.images, filename=fileName)
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", "untitled.mp4", "MP4 Files (*.mp4)", options=options)       
+        try:
+            save_images(self.images, filename=fileName)
+        except ModuleNotFoundError:
+            print('Please install the cv2 module to save')
+            
 
     def on_click_loop(self):
         print('Loop pressed')
@@ -546,7 +563,7 @@ if __name__ == '__main__':
 
 
 if False:
-
+    thread_1 = False
 
     
     
@@ -620,7 +637,7 @@ if False:
             for nindex in neigbouring_indexs:
                 self.new_slice(nindex) # loads data in the cache sp background after first thread        
                 if nindex == index:
-                    if thread_1
+                    if thread_1:
                         return self.cache[index] # you want it to do this first
             for nindex in neigbouring_indexs[::-1]:
                 self.cache.refresh(nindex)      
@@ -646,38 +663,6 @@ if False:
     
         
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-list(range(4,-1,-1))
-
-
-
-
-
-
-
-
-
-    
-
-
-    
-
-
 
 
 
