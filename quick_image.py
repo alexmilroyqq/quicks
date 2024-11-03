@@ -2,32 +2,34 @@
 """Created on Mon Oct  9 12:10:06 2023@author: alexm
 
 add canndy edge? here
-
+maybe histogram
 
 """
 
 import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
+from numpy import array as Array
 
 from quick_example import image
 
 
 
-
-
-
-def is_image_color(img):
-    if len(img.shape)==3 and img.shape[-1]==3:
-        return True
-    if len(img.shape)==3 and img.shape[-1]==1: 
-        return False
-    if len(img.shape)==2:
-        return False
-    assert False, 'Array is not Image'
-
+def image_read(filepath: str) -> Array:
+    from PIL import Image
+    img_pil = Image.open(filepath)
+    img = np.asarray(img_pil)
+    img = img/255
+    return img
 
 def image_show(*imgs, titles=None):
+    '''
+    Future pop out
+     size of image should be exact so pixel for pixel image
+     with titles as optional
+     black and white
+     detect variable name using inspect and have as title?
+    '''
     def convert_to_image(arg):
         out = arg
         if isinstance(arg, str):
@@ -41,27 +43,52 @@ def image_show(*imgs, titles=None):
         titles = list(imgs.keys())
         imgs = list(imgs.values())
         
-    imgs = [convert_to_image(fp) for fp in imgs]  
+
+    if isinstance(imgs[0], list):
+        if  isinstance(imgs[0][0], list):
+            if isinstance(imgs[0][0][0], np.ndarray):
+                imgs = [np.block([[[eee for eee in ee] for ee in e] for e in imgs])]
+                
+    imgs = [convert_to_image(fp) for fp in imgs]                
     imgs = [img.squeeze() for img in imgs ]   
     
-    ncols = len(imgs)    
-    fig, axs = plt.subplots(nrows=1, ncols=ncols, gridspec_kw={'wspace':0, 'hspace':0},figsize=(8, 8), squeeze=True)
+    ncols = len(imgs)
+    img_size = (sum([e.shape[0] for e in imgs]), imgs[0].shape[1])
+    global figsize
+    figsize = (8, 8)
+    figsize = [ max(a/100, b) for a,b in zip(img_size, figsize)]
+    fig, axs = plt.subplots(nrows=1, ncols=ncols, gridspec_kw={'wspace':0, 'hspace':0}, figsize=figsize, squeeze=True)
     
     if isinstance(titles, str) and len(imgs)>1:
         fig.suptitle(titles, fontsize=13)
         titles = None
     
     axs = axs if ncols>1 else [axs]
+    
     for i, (image, ax) in enumerate(zip(imgs, axs)):
         ax.axis("off")
         if not titles is None:
             ax.set_title(titles[i])
-        ax.imshow(image)
+        if image.ndim == 2:
+            ax.imshow(image, cmap='gray')
+        else:
+            ax.imshow(image)        
+
+def is_image_color(img):
+    if len(img.shape)==3 and img.shape[-1]==3:
+        return True
+    if len(img.shape)==3 and img.shape[-1]==1: 
+        return False
+    if len(img.shape)==2:
+        return False
+    assert False, 'Array is not Image'        
 
 color_dict = {'red':(255,0,0), 'green':(0,255,0), 'blue':(0,0,255),
               True:(0,255,0), False:(255,0,0), 'white':(255, 255, 255),
               'yellow':(255,255,0), 'black':(0,0,0)}
 
+
+#-----------------------------------------------------------------------------
 
 def add_box_to_image(fimg, box, clr = 'red', thickness=1):
     # (0,0) is top left (up-down, left-right)

@@ -20,21 +20,24 @@ def changed():
 
 '''
 
-This kind of works
-   1)  solve index so loops
+
+Works Well 
+Future Additions
+   1)  create a ui exe one?
+     **QPicture
    2)  get QPicture to deal with black and white images and floats
-   3)  mseconds best what happens if i want to pause an exact amount over iteration
-   4)  3d volumes it can deal with 
+    **Extra Info
    5)  titles?
    6)  can but second argument in with same length as images and the info will be displyed over image
-   6b) if list contains two images so both images side by side
-   7)  show stats of the variable
-   8)  name of variable in the name of the title
-   10) repeat mode
+   7)  if list contains two images so both images side by side 
+   9)  name of variable in the name of the title    
+    **Others
+   3)  mseconds best what happens if i want to pause an exact amount over iteration
+   4)  3d volumes it can deal with 
+   8)  show stats of the variable
    11) when hovering value of pixel as well as max min in image as well as image volume
    12) prograss bar differnt from 100 
-   13) I think it will try to resize it image is differnt size ie has been strecthced
-
+   13) I think it will try to resize it image is differnt size ie has been stretchced
     
 video_play(images)  
     
@@ -261,7 +264,7 @@ def read_images_in_folder(folder, size = (300, 400), filelimit=300):
     return images0
     
 
-
+# Most of the above should be imported
 #------------------------------------------------------------------------------
 
 class QSliceToolbar(QWidget):
@@ -270,9 +273,9 @@ class QSliceToolbar(QWidget):
         button_width = 32
         font = QFont('Arial', 14) 
         
-        self.prev_btn = QtWidgets.QPushButton('<')
+        self.prev_btn = QtWidgets.QPushButton('<')#◀<
         self.play_btn = QPushButton_switch()
-        self.next_btn = QtWidgets.QPushButton('>')
+        self.next_btn = QtWidgets.QPushButton('>')#▶>
 
         self.prev_btn.setFixedWidth(button_width)
         self.play_btn.setFixedWidth(button_width)
@@ -311,7 +314,13 @@ class QSliceToolbar(QWidget):
         #self.progress.setGeometry(50, 50, 500, 4)
         
         self.progress.setStyleSheet("QProgressBar::chunk { background-color: lightblue; }")
-
+        
+        self.prev_btn.setFocusPolicy(Qt.ClickFocus)
+        self.next_btn.setFocusPolicy(Qt.ClickFocus)
+        self.play_btn.setFocusPolicy(Qt.ClickFocus)       
+        self.save_btn.setFocusPolicy(Qt.ClickFocus)        
+        self.loop_btn.setFocusPolicy(Qt.ClickFocus)       
+        
         row2 = QHBox(play_buttons, slice_info)
         layout = QVBoxLayout()
         layout.addWidget(self.progress)
@@ -331,7 +340,7 @@ class MainWindow_PlayVideo(QMainWindow):
         self.index = index
         self.images = self.read_data(data)
         self.nimages = len(self.images)
-        
+        #.setFocus() .setFocus() 
         self.widget_image =  QPicture(self.current_image())
         self.toolbar = QSliceToolbar(self.nimages)
         
@@ -344,11 +353,10 @@ class MainWindow_PlayVideo(QMainWindow):
   
         self.toolbar.textbox.returnPressed.connect(self.validate_input)
   
-        self.toolbar.prev_btn.clicked.connect(self.on_click1)
-        self.toolbar.play_btn.clicked.connect(self.on_click2)
-        self.toolbar.next_btn.clicked.connect(self.on_click3)
-        self.toolbar.save_btn.clicked.connect(self.on_click_save) 
-        self.toolbar.loop_btn.clicked.connect(self.on_click_loop)         
+        self.toolbar.prev_btn.clicked.connect(self.dec_focus_label(self.on_click1))
+        self.toolbar.play_btn.clicked.connect(self.dec_focus_label(self.on_click2))
+        self.toolbar.next_btn.clicked.connect(self.dec_focus_label(self.on_click3))
+        self.toolbar.save_btn.clicked.connect(self.dec_focus_label(self.on_click_save))        
         
         self.toolbar.progress.mousePressEvent = self.jump_slice
         
@@ -357,21 +365,34 @@ class MainWindow_PlayVideo(QMainWindow):
         self.index_changed()
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.StrongFocus)
-  
-
+        self.widget_image.setFocus()
+        self.installEventFilter(self)
+    
+    def dec_focus_label(self, method):
+        def wrapper():
+            out = method()
+            self.widget_image.setFocus()    
+            return out
+        return wrapper
 
     def index_changed(self, new_index=None, add=0):
         if new_index is None:
             new_index = self.index
-        new_index = new_index + add
+        new_index = new_index + add     
         if new_index<0:
-            if add==-1:
-                new_index = self.index
+            if self.looping:
+                new_index = new_index%self.nimages
+            else:
+                if add==-1:
+                    new_index = self.index
         if new_index>=(self.nimages):
-            if add==+1:
-                new_index = self.index 
-                if self.worker._is_running:
-                    self.worker.stop()
+            if self.looping:
+                new_index = new_index%self.nimages
+            else:            
+                if add==+1:
+                    new_index = self.index 
+                    if self.worker._is_running:
+                        self.toolbar.play_btn.click()
              
         self.index = new_index
         image = self.current_image()
@@ -379,7 +400,10 @@ class MainWindow_PlayVideo(QMainWindow):
         self.toolbar.textbox.setText(str(new_index))
         pvalue = int(100*self.index/self.nimages)
         self.toolbar.progress.setValue(pvalue)
-        
+
+    @property
+    def looping(self):
+        return self.toolbar.loop_btn.isChecked()        
         
     def current_image(self):
         image = self.images[self.index]
@@ -418,11 +442,6 @@ class MainWindow_PlayVideo(QMainWindow):
         except ModuleNotFoundError:
             print('Please install the cv2 module to save')
             
-
-    def on_click_loop(self):
-        print('Loop pressed')
-
-
     def validate_input(self):
         text = self.toolbar.textbox.text()
         if text.isdigit() and 0 <= int(text) <= self.nimages:
@@ -438,7 +457,7 @@ class MainWindow_PlayVideo(QMainWindow):
             self.index_changed(index)
               
     def eventFilter(self, source, event):    
-        if event.type() == QEvent.KeyPress and self.underMouse():
+        if event.type() == QEvent.KeyPress:# and self.underMouse():
             if event.key() == Qt.Key_Left:
                 self.index_changed(add=-1)     
             if event.key() == Qt.Key_Right:
@@ -446,16 +465,6 @@ class MainWindow_PlayVideo(QMainWindow):
             if event.key() == Qt.Key_Space:
                self.toolbar.play_btn.click()
         return super().eventFilter(source, event)
-    
-    def enterEvent(self, event):
-        self.installEventFilter(self)
-        super().enterEvent(event)
-        
-    def leaveEvent(self, event):
-        self.removeEventFilter(self)
-        super().leaveEvent(event)
-    
-    
     
     def closeEvent(self, event):
         self.worker.terminate()  # Stop the thread
@@ -563,6 +572,8 @@ if __name__ == '__main__':
 
 
 if False:
+    #Below is an attempt to only load fist image and neiboring images so
+    # its quickere to work at first
     thread_1 = False
 
     
