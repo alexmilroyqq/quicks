@@ -2,7 +2,7 @@
 """Created on Mon Nov 11 10:40:52 2024@author: AlexMilroy"""
 
 
-def histogram(data, nbins=50, get_bins=False, get_info=False, plot=True, title=None, clip=None, info_extra=True):
+def histogram(data, nbins=50, get_bins=False, get_info=False, plot=True, title=None, clip=None, info_extra=True, axis_limits=None):
     # in future add more than one set of data?
     # max min median mean 10% 90% total points, number of nans
     import numpy as np
@@ -15,10 +15,13 @@ def histogram(data, nbins=50, get_bins=False, get_info=False, plot=True, title=N
         index = int(len(data)*clip)
         data = data[index:-index]
     range0 = None
-    if nbins==256:
-        if data.dtype == np.dtype('uint8'):
+    if data.dtype == np.dtype('uint8'):    
+        if nbins==256:
             range0 = (data.min(), data.max())
             nbins = range0[1] - range0[0]
+        if not axis_limits is None:
+            range0 = axis_limits
+            nbins = axis_limits[1] -axis_limits[0]
     counts, bin_edges = np.histogram(data, bins=nbins, range=range0)
     cumulative_counts = np.cumsum(counts)
     
@@ -43,7 +46,12 @@ def histogram(data, nbins=50, get_bins=False, get_info=False, plot=True, title=N
     if plot:
         fig, ax1 = plt.subplots(figsize=(8, 6))
         
-        ax1.hist(data, bins=nbins, color='blue', edgecolor='black', alpha=0.7, label='Histogram')
+        if False:
+            ax1.hist(data, bins=nbins                      , color='blue', edgecolor='black', alpha=0.7, label='Histogram')
+        else:
+            bin_width = bin_edges[1] - bin_edges[0]
+            ax1.bar(bin_edges[:-1], counts, width=bin_width, color='blue', edgecolor='black', alpha=0.7, label='Histogram')
+            
         ax1.set_xlabel('Value')
         ax1.set_ylabel('Frequency', color='blue')
         ax1.tick_params(axis='y', labelcolor='blue')
@@ -55,7 +63,8 @@ def histogram(data, nbins=50, get_bins=False, get_info=False, plot=True, title=N
         
         ax1.grid(True)
         if info_extra:
-            print(infos)
+            pinfos = '\n   '.join(['HistogramInfo:-']+infos.split('\n')+[''])
+            print(pinfos)
             # find best location to insert text
             # ax1.text(bin_edge, count, str(int(count)), ha='center', va='bottom')
         if title is None:
