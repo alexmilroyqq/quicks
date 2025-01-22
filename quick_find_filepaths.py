@@ -50,6 +50,11 @@ have this in the extension options
 
 need to check everythin works but looks good so far
 
+
+In future have split as an option so the ones that failed go into a second list that is outputed
+
+
+
 """
 
 
@@ -115,7 +120,7 @@ def find_filepaths(folder_path, subfolders=True, last_days=None, extension=None,
             with open(file, 'r', encoding='utf-8') as text_file:
                 content = text_file.read().lower()
             if any_in(content_contains, content):
-                out2.append(e)   
+                out2.append(file)   
         filepaths = out2
         
     if date_start is not None:

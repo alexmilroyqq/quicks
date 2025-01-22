@@ -8,7 +8,9 @@ cd C:\Users\Alexm\Desktop\EasyImportPython\quicks_git\quicks
 
 cd C:\Users\alexm\Desktop\QUICKS
 cd C:\Users\Alex\Desktop\QUICKS
-Dell XPS:-  cd C:\Users\Alexm\Desktop\EasyImportPython\quicks_git\quicks
+
+Dell XPS:-      cd C:\Users\Alexm\Desktop\EasyImportPython\quicks_git\quicks
+WorkGPULaptop:- *Use GitDesktop
 
 
 
